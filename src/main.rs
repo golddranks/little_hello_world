@@ -4,20 +4,19 @@
 #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 core::arch::global_asm!(
     ".globl __start
-__start: and    rsp, 0xfffffffffffffff0 # align stack to 16 bytes; expected by x86-64 Linux C ABI
+__start: and    rsp, 0xfffffffffffffff0 # align stack to 16 bytes
          call   _start2"
 );
 
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
 core::arch::global_asm!(
     ".globl _start
-_start: and    rsp, 0xfffffffffffffff0 # align stack to 16 bytes; expected by x86-64 Linux C ABI
+_start: and    rsp, 0xfffffffffffffff0 # align stack to 16 bytes
         call   start2"
 );
 
 #[no_mangle]
-#[allow(unused_unsafe)]
-unsafe extern "C" fn start2() -> ! {
+extern "C" fn start2() -> ! {
     let msg = "Hello, World!\n";
     #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
     let syscall_num = 0x02000004;
@@ -35,7 +34,7 @@ unsafe extern "C" fn start2() -> ! {
             lateout("rax") _,
         )
     };
-    
+
     #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
     let syscall_num = 0x02000001;
     #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
